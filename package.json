@@ -1,0 +1,23 @@
+{
+  "name": "home--center",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "start": "ts-node dist/server.js",
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "@types/express": "^4.17.6",
+    "@types/node": "^13.11.1",
+    "@types/serialport": "^8.0.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1",
+    "rxjs": "^6.5.5",
+    "serialport": "^8.0.7",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.8.3"
+  }
+}
