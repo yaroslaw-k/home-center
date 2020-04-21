@@ -4,11 +4,11 @@ import {Irgbw, LightMode, lightModes} from "./light-modes";
 
 
 export class LightEngine {
-    writePeriod: number = 2; // ms
+    writePeriod: number = 3; // ms
     baudRate: number = 250000;
     value: number = 0;
     serialPorts: SerialPort[];
-    serialAddresses = ['COM3', 'COM4'];
+    serialAddresses = ['/dev/ttyUSB0', '/dev/ttyUSB1'];
     modes = lightModes;
     currentMode: LightMode;
 
