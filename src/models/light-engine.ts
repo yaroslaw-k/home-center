@@ -1,6 +1,7 @@
 import SerialPort = require("serialport");
-import {timer} from "rxjs";
+import {Observable, timer} from "rxjs";
 import {Irgbw, LightMode, lightModes} from "./light-modes";
+import {take} from "rxjs/operators";
 
 
 export class LightEngine {
@@ -11,8 +12,8 @@ export class LightEngine {
     serialAddresses = ['/dev/ttyUSB0', '/dev/ttyUSB1'];
     modes = lightModes;
     currentMode: LightMode;
-
     tickGenerator = timer(0, this.writePeriod);
+    alarmEmitter: Observable<any>;
 
 
     constructor() {
@@ -61,6 +62,16 @@ export class LightEngine {
         console.log('-->', modeName, params);
         this.currentMode = this.modes.find(m => m.name === modeName);
         this.currentMode.setFunc(params);
+    }
+
+    setAlarm(date: Date, duration: number, maxPower: number) {
+        this.alarmEmitter = timer(date, 1,);
+        this.alarmEmitter.pipe(take(1)).subscribe(
+            _ => {
+                this.setMode('morning', {duration: duration, maxPower: maxPower});
+                this.alarmEmitter = null;
+            }
+        )
     }
 
 }

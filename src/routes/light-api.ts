@@ -15,6 +15,12 @@ router.post('/set-mode', function (req, res) {
     res.sendStatus(200);
 });
 
+router.post('/set-alarm', function (req, res) {
+    let body = req.body;
+    lightEngine.setAlarm(body.date, body.duration, body.maxPower);
+    res.sendStatus(200);
+});
+
 
 
 module.exports = router;

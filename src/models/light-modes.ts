@@ -50,7 +50,8 @@ export const lightModes: LightMode[] = [
             });
 
         },
-        () => {},
+        () => {
+        },
         [{r: 50, g: 0, b: 0, w: 0}, {r: 0, g: 50, b: 0, w: 0}],
         ['r', 'g']
     ),
@@ -59,7 +60,7 @@ export const lightModes: LightMode[] = [
         function () {
             let ct = (+(new Date()) - this.modeState.startTime);
             // console.log('timeLeft', ct/1000);
-            if (Math.floor(ct / this.modeState.period) % 2 === 0){
+            if (Math.floor(ct / this.modeState.period) % 2 === 0) {
                 this.lightStates[0].w = 255;
                 this.lightStates[1].w = 255;
                 // console.log('->')
@@ -69,11 +70,33 @@ export const lightModes: LightMode[] = [
             }
         },
         function (params: { frequency: number }) {
-            this.modeState.period =  Math.round(1000/params.frequency); //strobe period in ms
-            console.log('period: ', this.modeState.period);
+            this.modeState.startTime = new Date();
+            this.modeState.period = Math.round(1000 / params.frequency); //strobe period in ms
         },
         [{r: 0, g: 0, b: 0, w: 0}, {r: 0, g: 0, b: 0, w: 0}],
-        {startTime: new Date(), period: 1000}
+        {startTime: Date, period: 1000}
+    ),
+    new LightMode(
+        'morning',
+        function () {
+            let ct = (+(new Date()) - this.modeState.startTime);
+            if (ct / 60000 >= 10) {
+                let val = (ct / (this.modeState.duraton * 60 * 1000))
+                    * (this.modeState.maxPower / 100) * 255;
+                this.lightStates[0].w = Math.round(val);
+                this.lightStates[1].w = Math.round(val);
+                this.lightStates[0].b = Math.round(val * 0.3);
+                this.lightStates[1].b = Math.round(val * 0.3);
+            }
+
+        },
+        function (params: { duration: number, maxPower: number }) {
+            this.modeState.startTime = new Date();
+            this.modeState.duration = params.duration; // sunrise duration in min
+            this.modeState.maxPower = params.maxPower;
+        },
+        [{r: 0, g: 0, b: 0, w: 0}, {r: 0, g: 0, b: 0, w: 0}],
+        {startTime: Date, duration: 10, maxPower: 100}
     )
 
 ];
