@@ -65,7 +65,7 @@ export class LightEngine {
     }
 
     setAlarm(date: Date, duration: number, maxPower: number) {
-        this.alarmEmitter = timer(date, 1,);
+        this.alarmEmitter = timer(date, 1000,);
         this.alarmEmitter.pipe(take(1)).subscribe(
             _ => {
                 this.setMode('morning', {duration: duration, maxPower: maxPower});
