@@ -21,7 +21,7 @@ export class LightMode {
         this.setFunc = setFunc;
         this.lightStates = lightStates;
         this.modeState = modeState;
-        this.stopFunc = setFunc
+        this.stopFunc = stopFunc
     }
 
 }
@@ -107,7 +107,6 @@ export const lightModes: LightMode[] = [
         function () {
         },
         function (params: { colors: Irgbw[][], speed: number }) {
-            this.lightStates = params.colors[0];
             this.modeState.ticker = timer(0, params.speed).subscribe(() => {
                 this.modeState.counter++;
                 if (this.modeState.counter === 255) {
@@ -116,14 +115,14 @@ export const lightModes: LightMode[] = [
                 }
                 [0, 1].forEach(n => {
                     ['r', 'g', 'b', 'w'].forEach(c => {
-                        this.lightStates[n][c] = this.lightStates[n][c]
-                            + params.colors[this.modeState.currentColorI < (params.colors.length - 1) ? this.modeState.currentColorI + 1 : 0][n][c]
-                            - params.colors[this.modeState.currentColorI][n][c];
+                        let delta =(params.colors[this.modeState.currentColorI < (params.colors.length - 1) ? this.modeState.currentColorI + 1 : 0][n][c]
+                            - params.colors[this.modeState.currentColorI][n][c]) * this.modeState.counter / 255;
+                        this.lightStates[n][c] = Math.round(params.colors[this.modeState.currentColorI][n][c] + delta);
                     })
                 })
             });
         },
-        [],
+        [{r: 0, g: 0, b: 0, w: 0}, {r: 0, g: 0, b: 0, w: 0}],
         {ticker: null, currentColorI: 0, counter: 0},
         function () {
             this.modeState.ticker.unsubscribe();

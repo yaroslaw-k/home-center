@@ -5,7 +5,7 @@ import {take} from "rxjs/operators";
 
 
 export class LightEngine {
-    writePeriod: number = 3; // ms
+    writePeriod: number = 10; // ms
     baudRate: number = 250000;
     value: number = 0;
     serialPorts: SerialPort[];
@@ -56,9 +56,9 @@ export class LightEngine {
     }
 
     setMode(modeName: string, params: any) {
-        console.log('-->', modeName, params);
-        this.currentMode.stopFunc && this.currentMode.stopFunc();
+        if (this.currentMode.stopFunc) this.currentMode.stopFunc();
         this.currentMode = this.modes.find(m => m.name === modeName);
+        console.log('-->', modeName, params);
         this.currentMode.setFunc(params);
     }
 
