@@ -1,3 +1,5 @@
+import {timer} from "rxjs";
+
 export interface Irgbw {
     r: number,
     g: number,
@@ -9,15 +11,17 @@ export class LightMode {
     name: string;
     processFunc: any; // func for count values
     setFunc: any;
+    stopFunc?: any;
     lightStates: Irgbw[];
     modeState?: any;
 
-    constructor(name, processFunc, setFunc, lightStates, modeState?) {
+    constructor(name, processFunc, setFunc, lightStates, modeState?, stopFunc?) {
         this.name = name;
         this.processFunc = processFunc;
         this.setFunc = setFunc;
         this.lightStates = lightStates;
         this.modeState = modeState;
+        this.stopFunc = setFunc
     }
 
 }
@@ -88,7 +92,6 @@ export const lightModes: LightMode[] = [
                 this.lightStates[0].b = Math.round(val * 0.3);
                 this.lightStates[1].b = Math.round(val * 0.3);
             }
-
         },
         function (params: { duration: number, maxPower: number }) {
             this.modeState.startTime = new Date();
@@ -97,6 +100,34 @@ export const lightModes: LightMode[] = [
         },
         [{r: 0, g: 0, b: 0, w: 0}, {r: 0, g: 0, b: 0, w: 0}],
         {startTime: Date, duration: 10, maxPower: 100}
+    ),
+
+    new LightMode(
+        'roundUp',
+        function () {
+        },
+        function (params: { colors: Irgbw[][], speed: number }) {
+            this.lightStates = params.colors[0];
+            this.modeState.ticker = timer(0, params.speed).subscribe(() => {
+                this.modeState.counter++;
+                if (this.modeState.counter === 255) {
+                    this.modeState.counter = 0;
+                    this.modeState.currentColorI = this.modeState.currentColorI < (params.colors.length - 1) ? this.modeState.currentColorI + 1 : 0;
+                }
+                [0, 1].forEach(n => {
+                    ['r', 'g', 'b', 'w'].forEach(c => {
+                        this.lightStates[n][c] = this.lightStates[n][c]
+                            + params.colors[this.modeState.currentColorI < (params.colors.length - 1) ? this.modeState.currentColorI + 1 : 0][n][c]
+                            - params.colors[this.modeState.currentColorI][n][c];
+                    })
+                })
+            });
+        },
+        [],
+        {ticker: null, currentColorI: 0, counter: 0},
+        function () {
+            this.modeState.ticker.unsubscribe();
+        }
     )
 
 ];

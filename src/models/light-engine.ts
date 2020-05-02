@@ -26,24 +26,21 @@ export class LightEngine {
             new SerialPort(this.serialAddresses[0], {baudRate: this.baudRate}),
             new SerialPort(this.serialAddresses[1], {baudRate: this.baudRate}),
         ];
-        // console.time('->');
         this.tickGenerator.subscribe(_ => this.writeOutput());
         console.log('Light Engine Started!');
     }
 
     writeOutput() {
-        // console.timeLog('->');
         this.currentMode.processFunc();
         let val = [
             this.value2String(this.currentMode.lightStates[0]),
             this.value2String(this.currentMode.lightStates[1])
         ];
-        // console.log(val);
         this.serialPorts[0].write(val[0]);
         this.serialPorts[1].write(val[1]);
     }
 
-    genStringParam(p: number) {
+    genStringParam(p: number) { // todo: change to pudsrt
         let ps = p.toString(10);
         while (ps.length < 3) {
             ps = '0' + ps;
@@ -60,6 +57,7 @@ export class LightEngine {
 
     setMode(modeName: string, params: any) {
         console.log('-->', modeName, params);
+        this.currentMode.stopFunc && this.currentMode.stopFunc();
         this.currentMode = this.modes.find(m => m.name === modeName);
         this.currentMode.setFunc(params);
     }
