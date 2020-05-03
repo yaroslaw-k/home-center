@@ -36,12 +36,14 @@ export class LightEngine {
             this.value2String(this.currentMode.lightStates[0]),
             this.value2String(this.currentMode.lightStates[1])
         ];
+        console.log(val);
         this.serialPorts[0].write(val[0]);
         this.serialPorts[1].write(val[1]);
     }
 
     value2String(options: Irgbw): string {
-        return 's' + options.r.toString().padStart(3, '0') +
+        return 's'
+            + options.r.toString().padStart(3, '0')
             + options.g.toString().padStart(3, '0')
             + options.b.toString().padStart(3, '0')
             + options.w.toString().padStart(3, '0')
