@@ -5,7 +5,7 @@ import {take} from "rxjs/operators";
 
 
 export class LightEngine {
-    writePeriod: number = 10; // ms
+    writePeriod: number = 3; // ms
     baudRate: number = 250000;
     value: number = 0;
     serialPorts: SerialPort[];
@@ -40,19 +40,12 @@ export class LightEngine {
         this.serialPorts[1].write(val[1]);
     }
 
-    genStringParam(p: number) { // todo: change to pudsrt
-        let ps = p.toString(10);
-        while (ps.length < 3) {
-            ps = '0' + ps;
-        }
-        return ps;
-    }
-
     value2String(options: Irgbw): string {
-        return 's' + this.genStringParam(options.r)
-            + this.genStringParam(options.g)
-            + this.genStringParam(options.b)
-            + this.genStringParam(options.w) + 'f';
+        return 's' + options.r.toString().padStart(3, '0') +
+            + options.g.toString().padStart(3, '0')
+            + options.b.toString().padStart(3, '0')
+            + options.w.toString().padStart(3, '0')
+             + 'f';
     }
 
     setMode(modeName: string, params: any) {
